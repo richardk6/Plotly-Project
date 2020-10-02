@@ -1,7 +1,3 @@
-function DrawBubblechart(sampleID) {
-    console.log(`DrawBubblechart(${sampleID})`);
-}
-
 function DrawBargraph(sampleID) {
     console.log(`DrawBargraph(${sampleID})`);
 
@@ -33,31 +29,62 @@ function DrawBargraph(sampleID) {
     });
 }
 
-function ShowMetadata(sampleID) {
-    console.log(`DrawShowMetadata(${sampleID})`);
+function DrawBubblechart(sampleID) {
+    console.log(`DrawBubblechart(${sampleID})`);
 
-    d3.joson("samples.json").then((data) => {
+    d3.json("samples.json").then((data) => {
 
-        var metadata = data.metadata;
-        var resultArray = metadata.filter(md => md.id == sampleID);
+        var samples = data.samples;
+        var resultArray = samples.filter(s => s.id == sampleID);
         var result = resultArray[0];
+        
+        var otu_ids = result.otu_ids;
+        var otu_labels = result.otu_labels;
+        var sample_values = result.sample_values;
 
-        var.panel = d3.select(`#sample-metadta`);
-        panel.html("");
-
-        Object.entries(result).forEach(([key, value]) => {
-            var textToShow = `SampleId = ${sampleID}`;
-            panel.append("h6").text(textToShow);
-
-        });
+        // Build a Bubble Chart using the sample data
+        var bubbleData = [{
+                x: otu_ids,
+                y: sample_values,
+                text: otu_labels,
+                mode: "markers",
+                type: "scatter",
+                marker: {
+                    color: otu_ids,
+                    size: sample_values,
+                }
+            }
+        ];
+            
+        var bubbleLayout = {
+            margin: { t: 50 },
+            title: "Belly Button Bacteria",
+            xaxis: { title: "Sample Id's" },
+            hovermode: "closest",
+        };
+          
+        Plotly.newPlot("bubble", bubbleData, bubbleLayout);
     });
 }
 
-function optionChanged(newSampleId) {
+function ShowMetadata(sampleID) {
+    console.log(`DrawShowMetadata(${sampleID})`);
 
-    DrawBargraph(newSampleId);
-    DrawBubblechart(newSampleId);
-    ShowMetadata(newSampleId);
+    d3.json("samples.json").then((data) => {
+
+        var metadata = data.metadata;
+        var resultsArray = metadata.filter(md => md.id == sampleID);
+        var result = resultsArray[0];
+
+        var panel = d3.select(`#sample-metadata`);
+        panel.html("");
+
+        Object.entries(result).forEach(([key, value]) => {
+            var textToShow = `Sample Id = ${sampleID}`;
+            panel.append("h6").text(`${key}: ${value}`);
+
+        });
+    });
 }
 
 function initDashboard() {
@@ -86,81 +113,11 @@ function initDashboard() {
     });
 }
 
-// initDashboard();
+function optionChanged(newSampleId) {
 
-// // Submit Button handler
-// function handleSubmit() {
+    DrawBargraph(newSampleId);
+    DrawBubblechart(newSampleId);
+    ShowMetadata(newSampleId);
+}
 
-//     // Prevent the page from refreshing
-//     d3.event.preventDefault();
-  
-//     // Select the input value from the form
-//     var sample = d3.select("#selDataset").node().value;
-  
-//     // clear the input value
-//     d3.select("#selDataset").node().value = "";
-  
-//     // Build the plot with the new stock
-//     buildBar(sample);
-//   }
-  
-// function buildBar(): {
-// var plotData = `/samples/${sample}`;
-// d3.json(plotData).then(function (data) {
-
-//         // Grab values from the data json object to build the plots
-//         var samples = data.samples;
-//         var stock = data.dataset.dataset_code;
-//         var startDate = data.dataset.start_date;
-//         var endDate = data.dataset.end_date;
-//         var dates = unpack(data.dataset.data, 0);
-//         var closingPrices = unpack(data.dataset.data, 4);
-    
-//         var trace1 = {
-//           type: "scatter",
-//           mode: "lines",
-//           name: name,
-//           x: dates,
-//           y: closingPrices,
-//           line: {
-//             color: "#17BECF"
-//           }
-//         };
-    
-//         var data = [trace1];
-    
-//         var layout = {
-//           title: `${stock} closing prices`,
-//           xaxis: {
-//             range: [startDate, endDate],
-//             type: "date"
-//           },
-//           yaxis: {
-//             autorange: true,
-//             type: "linear"
-//           }
-//         };
-    
-//         Plotly.newPlot("plot", data, layout);
-    
-//       });
-
-//       function init() {
-
-//         // Prevent the page from refreshing
-//         d3.event.preventDefault();
-      
-//         // Select the input value from the form
-//         var selector = d3.select("#selDataset").node().value;
-      
-//         // clear the input value
-//         d3.select("#selDataset").node().value = "";
-      
-//         // Build the plot with the new stock
-//         buildBar(sample);
-//       }
-//     }
-    
-//     buildPlot();
-    
-// }
+initDashboard();
