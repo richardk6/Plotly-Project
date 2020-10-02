@@ -1,3 +1,5 @@
+// A lot of this code was written in office hours with the instructor walking us through the solution.
+
 function DrawBargraph(sampleID) {
     console.log(`DrawBargraph(${sampleID})`);
 
