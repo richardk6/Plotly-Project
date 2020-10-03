@@ -98,7 +98,7 @@ function DrawGaugechart(sampleID) {
                 gauge: {
                     axis: { range: [null, 9] },
                     axis: { range: [null, 9 ], tickwidth: 1, tickcolor: "darkblue" },
-                    bar: { color: "pink" },
+                    bar: { color: "yellow" },
                     borderwidth: 2,
                     bordercolor: "gray",
                     steps: [
