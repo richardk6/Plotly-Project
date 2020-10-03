@@ -1,10 +1,12 @@
-// A lot of this code was written in office hours with the instructor walking us through the solution.
+// Some of this code was written in office hours with the instructor walking us through the solution.
 
 function DrawBargraph(sampleID) {
     console.log(`DrawBargraph(${sampleID})`);
 
     d3.json("samples.json").then((data) => {
         
+        console.log(data);
+
         var samples = data.samples;
         var resultArray = samples.filter(s => s.id == sampleID);
         var result = resultArray[0];
@@ -44,6 +46,7 @@ function DrawBubblechart(sampleID) {
         var otu_labels = result.otu_labels;
         var sample_values = result.sample_values;
 
+        console.log(sample_values);
         // Build a Bubble Chart using the sample data
         var bubbleData = [{
                 x: otu_ids,
@@ -74,33 +77,44 @@ function DrawGaugechart(sampleID) {
     
     d3.json("samples.json").then((data) => {
 
-        var samples = data.samples;
-        var resultArray = samples.filter(s => s.id == sampleID);
-        var result = resultArray[0];
+        var metadata = data.metadata;
+        var resultsArray = metadata.filter(md => md.id == sampleID);
+        var result = resultsArray[0];
         
-        var weekly_washes = result.wfreq
+        var weekly_washes = result.wfreq;
+        console.log(weekly_washes);
 
         var gaugeData = [
             {
                 domain: { x: [0, 1], y: [0, 1] } ,
                 value: weekly_washes,
+                labels: ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9"],
                 title: { text: "Belly Button Washing Frequency: Scrubs per Week" },
                 type: "indicator",
                 mode: "gauge+number",
-                delta: { reference: 380 },
+                marker: {
+                    labels: ['0-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9'],
+                  },
                 gauge: {
                     axis: { range: [null, 9] },
-                steps: [
-                    { range: [0, 1], color: "lightgray" },
-                    { range: [1, 2], color: "gray" }
-                ],
-                threshold: {
-                    line: { color: "red", width: 4 },
-                    thickness: 0.75,
-                    value: weekly_washes
-                }
+                    axis: { range: [null, 9 ], tickwidth: 1, tickcolor: "darkblue" },
+                    bar: { color: "pink" },
+                    borderwidth: 2,
+                    bordercolor: "gray",
+                    steps: [
+                        { range: [0, 1], color: "#FFFFF0" },
+                        { range: [1, 2], color: "#F0FFF0" },
+                        { range: [2, 3], color: "#00FA9A" },
+                        { range: [3, 4], color: "#90EE90" },
+                        { range: [4, 5], color: "#66CDAA" },
+                        { range: [5, 6], color: "#32CD32" },
+                        { range: [6, 7], color: "#3CB371" },
+                        { range: [7, 8], color: "#228B22" },
+                        { range: [8, 9], color: "#006400" }
+                    ],
+                },
             }
-        }];
+        ];
 
         var gaugeLayout = { width: 600, height: 500, margin: { t: 50, b: 50} };
 
@@ -161,7 +175,7 @@ function optionChanged(newSampleId) {
     DrawBargraph(newSampleId);
     DrawBubblechart(newSampleId);
     ShowMetadata(newSampleId);
-    DrawGaugechart(newsampleID);
+    DrawGaugechart(newSampleId);
 }
 
 initDashboard();
